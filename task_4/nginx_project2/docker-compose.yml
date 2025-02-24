@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      # Монтируем папку с хоста в контейнер
+      - ./logs:/var/log/nginx

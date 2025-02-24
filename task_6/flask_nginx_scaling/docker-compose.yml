@@ -1,0 +1,23 @@
+services:
+  web:
+    build: ./app
+    deploy:
+      replicas: 3  # Запускаем 3 копии Flask-приложения
+    networks:
+      - my_network
+    restart: always  # Перезапуск при сбоях
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:80"  # Оставляем проброс только для Nginx
+    depends_on:
+      - web
+    networks:
+      - my_network
+    restart: always
+
+networks:
+  my_network:
