@@ -1,0 +1,21 @@
+---
+- name: Create user on Ubuntu and Fedora
+  hosts: all
+  become: yes
+
+  vars_prompt:
+    - name: user_password
+      prompt: "Enter password for ansible_user"
+      private: true
+
+  tasks:
+    - name: Set user group based on OS
+      ansible.builtin.set_fact:
+        user_group: "{{ 'sudo' if ansible_os_family == 'Debian' else 'wheel' }}"
+
+    - name: Create ansible_user
+      ansible.builtin.user:
+        name: ansible_user
+        password: "{{ user_password | password_hash('sha512') }}"
+        groups: "{{ user_group }}"
+        append: yes

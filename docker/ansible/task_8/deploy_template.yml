@@ -1,0 +1,21 @@
+---
+- name: Deploy index.html from template
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Deploy index.html template
+      ansible.builtin.template:
+        src: index.html.j2
+        dest: /var/www/html/index.html
+        owner: "{{ ansible_user | default('vagrant') }}"
+        group: "{{ ansible_user | default('vagrant') }}"
+        mode: '0644'
+      notify: Restart web service
+
+  handlers:
+    - name: Restart web service
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+      when: ansible_service_mgr == "systemd"

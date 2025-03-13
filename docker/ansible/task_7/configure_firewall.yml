@@ -1,0 +1,20 @@
+---
+- name: Configure firewall (UFW for Ubuntu, Firewalld for Fedora)
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Open port 80 in UFW (Ubuntu)
+      ansible.builtin.ufw:
+        rule: allow
+        port: 80
+        proto: tcp
+      when: ansible_os_family == "Debian"
+
+    - name: Open port 80 in Firewalld (Fedora)
+      ansible.builtin.firewalld:
+        port: 80/tcp
+        permanent: yes
+        state: enabled
+        immediate: yes
+      when: ansible_os_family == "RedHat"
